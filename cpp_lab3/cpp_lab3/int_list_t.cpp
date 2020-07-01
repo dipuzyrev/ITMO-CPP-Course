@@ -33,11 +33,14 @@ int_list_t::~int_list_t() {
 }
 
 int_list_t &int_list_t::operator=(const int_list_t &other) {
-    clear();
-    _size = other.size();
-    for (int i = 0; i < other.size(); i++) {
-      push_back(other[i]);
+    if(this != &other) {
+        clear();
+        _size = other._size;
+        for (int i = 0; i < other._size; i++) {
+          push_back(other[i]);
+        }
     }
+    
     return *this;
 }
 

@@ -14,17 +14,6 @@ void test(const size_t val1, const size_t val2);
 void test(const bool condition);
 
 int main() {
-//    {
-//        int_list_t list;
-//        for (int i = 0; i <= 10; i++) {
-//            list.push_back(i);
-//        }
-////        list = list;
-//        std::cout << "list = list" << std::endl;
-//        std::cout << list << std::endl;
-////        exit(0);
-//    }
-    
     {
         print_test("Create empty list");
         int_list_t list;
@@ -45,6 +34,13 @@ int main() {
         list1[0] = 0;
         test(list1, {0, 1, 1, 1, 1});
         test(list2, {1, 1, 1, 1, 1});
+        
+        int_list_t list;
+        for (int i = 0; i < 5; i++) {
+            list.push_back(i);
+        }
+        list = list;
+        test(list, {0, 1, 2, 3, 4});
     }
     
     {
