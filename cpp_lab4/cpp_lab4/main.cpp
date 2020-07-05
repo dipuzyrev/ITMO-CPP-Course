@@ -7,26 +7,30 @@
 #include "strategies/computer2.h"
 
 int main() {
-    
-    auto player1 = std::make_shared<Player>("Dima", 'w');
-    auto player2 = std::make_shared<Computer2>("MacBook", 'b');
-
-    Game game(player1, player2);
-    game.play();
-    
-//    auto player1 = std::make_shared<Computer1>("Naive", 'w');
-//    auto player2 = std::make_shared<Computer2>("Smart", 'b');
+//    {
+//        auto player1 = std::make_shared<Computer1>("Naive", 'w');
+//        auto player2 = std::make_shared<Computer2>("Smart", 'b');
 //
-//    for (int i = 0; i < 1000; ++i) {
-//        std::cout << "game #" << i << std::endl;
-//        Game game(player1, player2);
-//        game.play();
+//        for (int i = 0; i < 1000; ++i) {
+//            std::cout << "game #" << i << std::endl;
+//            Game game(player1, player2);
+//            game.play();
+//        }
+//
+//        player1->print_stat();
+//        player2->print_stat();
 //    }
-//
-//    player1->print_stat();
-//    player2->print_stat();
+    {
+            
+        auto player1 = std::make_shared<Player>("Dima", 'w');
+        auto player2 = std::make_shared<Player>("Sasha", 'b');
+//        auto player2 = std::make_shared<Computer2>("MacBook", 'b');
 
-    return 0;
+        Game game(player1, player2);
+        game.play();
+        
+        return 0;
+    }
 }
 
 

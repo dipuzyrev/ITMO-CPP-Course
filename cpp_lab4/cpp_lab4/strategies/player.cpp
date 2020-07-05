@@ -1,5 +1,7 @@
 #include "player.h"
 
+#include <vector>
+
 bool operator<(const position_t &pos1, const position_t &pos2) {
     if (pos1.x != pos2.x) {
         return pos1.x < pos2.x;
@@ -36,6 +38,11 @@ void Player::init_pawns() {
 }
 
 step_t Player::make_step(const std::shared_ptr<Player> &enemy) const {
+    
+    if(!can_go(enemy)) { // no possible steps anymore
+        return step_t {{0,0}, {0,0}};
+    }
+    
     std::cout << std::endl;
     print_field(enemy);
     std::cout << std::endl << name << ", your turn!" << std::endl << "Input coordinates (like '6a 5b'): ";
@@ -56,21 +63,128 @@ void Player::on_incorrect_step(const step_t &step) const {
     std::cout << std::endl << "Incorrect input!" << std::endl;
 }
 
-void Player::move_pawn(const step_t &step) {
+step_type Player::move_pawn(const step_t &step) {
     position_t before = step.before;
     position_t after = step.after;
     
-    if (pawns.count(before) != 0) {
+    if (pawns.count(before) != 0) {  // pawn exists on map
         pawns[after] = pawns[before];
-        if (after.x == 1) { pawns[after] = KING; }
         pawns.erase(before);
+        
+        if (after.x == 1) {  // first row of enemy's field - transform to KING
+            pawns[after] = KING;
+            return BECOME_KING;
+        }
+        
+        return STEP;
     }
+    
+    return WRONG;
 }
 
 void Player::remove_pawn(const position_t &position) {
     if (pawns.count(position) != 0) {
         pawns.erase(position);
     }
+}
+
+bool Player::can_go(const std::shared_ptr<Player> &enemy) const {
+    
+    for (auto it=pawns.begin(); it!=pawns.end(); ++it) {
+        position_t pawn_pos = it->first;
+        pawn_type pawn_type = it->second;
+        
+        std::vector<position_t> near_cells = {
+            {pawn_pos.x + 1, pawn_pos.y + 1},
+            {pawn_pos.x + 1, pawn_pos.y - 1},
+            {pawn_pos.x - 1, pawn_pos.y + 1},
+            {pawn_pos.x - 1, pawn_pos.y - 1}
+        };
+    
+        for (int i = 0; i < 4; i++) {
+            if ((i < 2) && (pawn_type != KING)) { continue; }  // MEN could go only forward
+            
+            position_t pos = near_cells[i];
+            
+            if (((pos.x <= 8) && (pos.x >= 1)) && ((pos.y <= 8) && (pos.y >= 1))) {
+                if (check_cell(pos, enemy) == EMPTY) {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+bool Player::can_eat(const std::shared_ptr<Player> &enemy) const {
+    for (auto const& pawn: pawns) {
+        if (can_eat(pawn.first, enemy)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+
+bool Player::can_eat(position_t p_position, const std::shared_ptr<Player> &enemy) const {
+    pawn_type p_type = pawns.find(p_position)->second;
+    
+    if (p_type == MAN) {
+        std::vector<position_t> near_cells = {
+            {p_position.x + 1, p_position.y + 1},
+            {p_position.x + 1, p_position.y - 1},
+            {p_position.x - 1, p_position.y + 1},
+            {p_position.x - 1, p_position.y - 1}
+        };
+        
+        std::vector<position_t> near_cells_2 = {
+            {p_position.x + 2, p_position.y + 2},
+            {p_position.x + 2, p_position.y - 2},
+            {p_position.x - 2, p_position.y + 2},
+            {p_position.x - 2, p_position.y - 2}
+        };
+    
+        for (int i = 0; i < 4; i++) {
+            position_t pos2 = near_cells_2[i];
+            
+            if (((pos2.x <= 8) && (pos2.x >= 1)) && ((pos2.y <= 8) && (pos2.y >= 1))) {
+                if ((check_cell(pos2, enemy) == EMPTY) && (check_cell(near_cells[i], enemy) == ENEMY)) {
+                    return true;
+                }
+            }
+        }
+    } else {
+        std::vector<position_t> iterators = {
+            {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+        };
+        for (int j = 0; j < 4; j++) {
+            position_t iterator = iterators[j];
+            
+            for (int i = 1; i < 8; i++) {
+                int near_x1 = p_position.x + (iterator.x * i);
+                int near_y1 = p_position.y + (iterator.y * i);
+                int near_x2 = p_position.x + (iterator.x * (i + 1));
+                int near_y2 = p_position.y + (iterator.x * (i + 1));
+                
+                if ((near_x2 <= 8) && (near_x2 >= 1) && (near_y2 <= 8) && (near_y2 >= 1)) {
+                    if ((check_cell({near_x2, near_y2}, enemy) == EMPTY) &&
+                        (check_cell({near_x1, near_y1}, enemy) == ENEMY)) {
+                        return true;
+                    } else if (check_cell({near_x1, near_y1}, enemy) == EMPTY) {
+                        continue;
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+    
+    return false;
 }
 
 void Player::on_lose() {

@@ -13,9 +13,13 @@ public:
     
     virtual step_t make_step(const std::shared_ptr<Player> &enemy) const;
     virtual void on_incorrect_step(const step_t &step) const;
-    void move_pawn(const step_t &step);
+    step_type move_pawn(const step_t &step);
     void remove_pawn(const position_t &position);
     void print_field(const std::shared_ptr<Player> &enemy) const;
+    
+    bool can_go(const std::shared_ptr<Player> &enemy) const;
+    bool can_eat(const std::shared_ptr<Player> &enemy) const;
+    bool can_eat(position_t p_position, const std::shared_ptr<Player> &enemy) const;
 
     virtual void on_lose();
     virtual void on_win();

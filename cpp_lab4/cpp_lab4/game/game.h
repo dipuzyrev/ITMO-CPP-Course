@@ -20,12 +20,14 @@ private:
         TIE
     };
 
-    game_status_t game_status();
-    bool apply_step(const step_t &step, size_t player_num);
+    game_status_t game_status(size_t current_player_index);
+    step_type apply_step(const step_t &step, size_t player_num, position_t previous_eat);
 
     std::vector<player_t> players;
     
-    int steps_count;
-    int pawns_count;
+    size_t steps_count;
+    size_t pawns_count;
+    
+    size_t next_counter(const size_t counter) const;
 };
 

@@ -8,8 +8,22 @@ struct position_t {
     int x, y;
 };
 
+enum step_type {
+    STEP,
+    EAT,
+    BECOME_KING,
+    WRONG
+};
+
 struct step_t {
-    step_t(position_t before, position_t after): before{before}, after{after} {}
+    step_t():
+    before{position_t(0,0)},
+    after{position_t(0,0)} {}
+    
+    step_t(position_t before, position_t after):
+        before{before},
+        after{after} {}
+    
     position_t before;
     position_t after;
 };
