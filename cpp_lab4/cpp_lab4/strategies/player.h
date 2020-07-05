@@ -9,7 +9,7 @@
 class Player {
 public:
     Player(std::string name, char color);
-    void init_pawns();
+    void init_pawns(int option = 0);
     
     virtual step_t make_step(const std::shared_ptr<Player> &enemy) const;
     virtual void on_incorrect_step(const step_t &step) const;

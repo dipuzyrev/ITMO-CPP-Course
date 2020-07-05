@@ -13,7 +13,7 @@ bool operator<(const position_t &pos1, const position_t &pos2) {
 Player::Player(std::string name, char color): name(name), color(color) {}
 
 
-void Player::init_pawns() {
+void Player::init_pawns(int option) {  // option is only for debug purposes
     
       /* Place pawns in start position:       A B C D E F G H
                                              -----------------
@@ -29,12 +29,49 @@ void Player::init_pawns() {
                                               A B C D E F G H     */
     pawns.clear();
     
-    for (int i = 8; i >= 6; i--) {
-          pawns[position_t(i, (i % 2) + 1)] = MAN;
-          pawns[position_t(i, (i % 2) + 3)] = MAN;
-          pawns[position_t(i, (i % 2) + 5)] = MAN;
-          pawns[position_t(i, (i % 2) + 7)] = MAN;
-      }
+    if (!option) {
+        for (int i = 8; i >= 6; i--) {
+            pawns[position_t(i, (i % 2) + 1)] = MAN;
+            pawns[position_t(i, (i % 2) + 3)] = MAN;
+            pawns[position_t(i, (i % 2) + 5)] = MAN;
+            pawns[position_t(i, (i % 2) + 7)] = MAN;
+        }
+        return;
+    }
+
+    if (option == 1) {
+        pawns[position_t(8,1)] = MAN;
+        pawns[position_t(8,3)] = MAN;
+        pawns[position_t(8,7)] = MAN;
+        pawns[position_t(7,2)] = MAN;
+        pawns[position_t(5,4)] = MAN;
+        pawns[position_t(3,8)] = MAN;
+        pawns[position_t(5,6)] = KING;
+    } else if (option == 2) {
+        pawns[position_t(7,6)] = MAN;
+        pawns[position_t(3,8)] = MAN;
+    } else if (option == 3) {
+        pawns[position_t(8,3)] = MAN;
+        pawns[position_t(8,7)] = MAN;
+        pawns[position_t(7,2)] = MAN;
+        pawns[position_t(7,6)] = MAN;
+        pawns[position_t(7,8)] = MAN;
+        pawns[position_t(6,7)] = MAN;
+        pawns[position_t(5,2)] = MAN;
+        pawns[position_t(1,4)] = KING;
+    } else if (option == 4) {
+        pawns[position_t(8,3)] = MAN;
+        pawns[position_t(8,1)] = MAN;
+        pawns[position_t(8,7)] = MAN;
+        pawns[position_t(7,2)] = MAN;
+        pawns[position_t(6,1)] = MAN;
+        pawns[position_t(6,3)] = MAN;
+        pawns[position_t(6,5)] = MAN;
+        pawns[position_t(5,4)] = MAN;
+        pawns[position_t(4,1)] = MAN;
+        pawns[position_t(4,3)] = MAN;
+    }
+    
 }
 
 step_t Player::make_step(const std::shared_ptr<Player> &enemy) const {
@@ -166,7 +203,7 @@ bool Player::can_eat(position_t p_position, const std::shared_ptr<Player> &enemy
                 int near_x1 = p_position.x + (iterator.x * i);
                 int near_y1 = p_position.y + (iterator.y * i);
                 int near_x2 = p_position.x + (iterator.x * (i + 1));
-                int near_y2 = p_position.y + (iterator.x * (i + 1));
+                int near_y2 = p_position.y + (iterator.y * (i + 1));
                 
                 if ((near_x2 <= 8) && (near_x2 >= 1) && (near_y2 <= 8) && (near_y2 >= 1)) {
                     if ((check_cell({near_x2, near_y2}, enemy) == EMPTY) &&

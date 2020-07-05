@@ -87,7 +87,11 @@ step_type Game::apply_step(const step_t &step, size_t player_num, position_t pre
                     enemy->remove_pawn(pawn);
                 }
                 
-                return WRONG;
+                if (enemies.size()) {
+                    return EAT;
+                } else {
+                    return STEP;
+                }
             }
             
             return WRONG;
@@ -125,9 +129,9 @@ Game::game_status_t Game::game_status(size_t current_player_index) {
 }
 
 void Game::play() {
-    for (size_t i = 0; i < players.size(); ++i) {
-        players[i]->init_pawns();
-    }
+    // you could place custom option to these functions for manual initialization
+    players[0]->init_pawns();
+    players[1]->init_pawns();
     
     size_t counter = 1;
 
@@ -155,6 +159,8 @@ void Game::play() {
                 } else if (step_result == EAT) {
                     previous_eat = step.after;
                 }
+                
+//                std::cout << "can eat: " << players[counter]->can_eat(step.after, enemy) << std::endl;
                 
             } while((step_result == EAT or step_result == BECOME_KING) &&
                     players[counter]->can_eat(step.after, enemy));

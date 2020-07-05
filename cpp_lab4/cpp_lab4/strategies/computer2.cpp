@@ -64,7 +64,7 @@ step_t Computer2::find_eating_option(const std::shared_ptr<Player> &enemy) const
                     int near_x1 = pawn_pos.x + (iterator.x * i);
                     int near_y1 = pawn_pos.y + (iterator.y * i);
                     int near_x2 = pawn_pos.x + (iterator.x * i) + 1;
-                    int near_y2 = pawn_pos.y + (iterator.x * i) + 1;
+                    int near_y2 = pawn_pos.y + (iterator.y * i) + 1;
                     
                     if (((near_x2 <= 8) && (near_x2 >= 1)) && ((near_y2 <= 8) && (near_y2 >= 1))) {
                         if ((check_cell({near_x2, near_y2}, enemy) == EMPTY) &&
